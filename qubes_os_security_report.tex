@@ -1,0 +1,36 @@
+\documentclass[runningheads,a4paper]{article}
+
+\usepackage{amssymb}
+\setcounter{tocdepth}{3}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{todonotes}
+
+\begin{document}
+\title{Qubes OS Security Analysis}
+
+\author{\"Ulber Onur Akin, Charlotte Bonte}
+
+\maketitle
+
+\tableofcontents
+\section{Introduction}
+Qubes OS is an open-source security-oriented operating system. It is based on Fedora, a Linux distribution, and Xen, a vitrual machine monitor. The main idea of Qubes OS is to compartmentalize the various actions you perform on your computer into isolated qubes. This technique is referred to as security by isolation and is achieved by using domains implemented as lightweight Xen virtual machines. This separation assures that when one qube gets compromised, the other qubes are not at risk, since the programs are isolated. However, all isolated qubes are integrated in one system, like this Qubes OS allows you to perform all your actions on one physical computer without having to worry that one attack may compromise your whole system. Not every app runs in its own qube, instead each qube represents a security domain. In the default options, three qubes will be created: work, personal and unthrusted. Applications running in a qube have a colored frame to indicate the qube or equivalently security domain they run in.
+
+\section{Principals}
+\section{Subjects}
+\section{Objects}
+\subsection{Copy and paste between domains}
+Qubes OS supports a secure copy and paste operation between domains. The copy-paste operation happens through a clipboard. To copy text from domain A to domain B, you start by copying some text in an applications window of domain A, it will copy this into the domain's local clipboard. Then by using the key combination Ctrl-Shift-C you let Qubes know that you want to select this domain's clipboard for global copy between domains. The next step is to select the destination application in domain B and use the key combination Ctrl-Shirt-V. This will make the global clipboard avaliable to apps running in domain B. This step ensures that only the applications of domain B will get access tot the clipboard copied from domain A. The last action to take is to use the destination application specific key combination for pasting the clipboard and then you copied the text from domain A to domain B.\\
+This 'secure' copying is called secure since it does not allow VMs outside the security domain B to steal the content of the clipboard. However, it does not prevent writing from a less trusted to a more trusted domain. It leaves this responsibility to the user itself. The policy can be configured, in the sense that you can set the policy to never allow pastes into certain domains. This is done by altering the policy in /etc/qubes-rpc/policy/qubes.ClipboardPaste with the command \$anyvm  vault   deny
+\$anyvm  \$anyvm  ask (try this out in VM)
+\subsubsection{Copying from and to dom0}
+\section{Access control}
+
+%\bibliographystyle{alpha}
+%\bibliography{references}
+
+\end{document}
