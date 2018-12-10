@@ -17,22 +17,248 @@
 \maketitle
 
 \tableofcontents
-
-\newpage
 \section{Introduction}
-Qubes OS is an open-source security-oriented operating system. It is based on Fedora, a Linux distribution, and Xen, a vitrual machine monitor. The main idea of Qubes OS is to compartmentalize the various actions you perform on your computer into isolated qubes. This technique is referred to as security by isolation and is achieved by using domains implemented as lightweight Xen virtual machines. This separation assures that when one qube gets compromised, the other qubes are not at risk, since the programs are isolated. However, all isolated qubes are integrated in one system, like this Qubes OS allows you to perform all your actions on one physical computer without having to worry that one attack may compromise your whole system. Not every app runs in its own qube, instead each qube represents a security domain. In the default options, three qubes will be created: work, personal and unthrusted. Applications running in a qube have a colored frame to indicate the qube or equivalently security domain they run in.
 
-\section{Principals}
+Qubes OS is an open-source security-oriented operating system.  It is
+based on Fedora, a Linux distribution, and Xen, a vitrual machine
+monitor.  It has been developed by Invisible Things Lab founded by the
+well-known computer security researcher, Joanna Rutkowska. It has been
+initially released in 2012, while its latest version of R 4.0 was
+released on March 28, 2018.
+
+Qubes OS is based on the assumption that it is impossibleto create a
+bug-free desktop environment and one critical bug can ruin the
+security of the your system and have malicious software taking control
+of your machine. Qubes OS plans to provide security by
+compartmentalisation of the various actions 
+you perform on your computer into securely isolated compartments,
+called qubes.  This separation assures that when one qube gets
+compromised, the others remain unaffected, since they are isolated.
+This technique is referred to as security by compartmentalization or
+security by isolation.  Qubes integrates all these secure containers
+into a unified desktop environment.  As such, Qubes OS allows you to
+perform all your actions on one physical computer without having to
+worry that one attack may compromise your whole system.  This provides
+a better user experience over traditional methods of isolation.  The
+different qubes are implemented as lightweight Xen virtual machines,
+that do not interfere with each other.  Note that Qubes OS enables
+users to have copy-paste operations and file sharing between the
+different security domains, but other than these intrinsic mechanisms
+there is no information flow between the different VMs, hence no
+unauthorized data flow can take place.  
+
+Not every app runs in its own qube for efficiency reasons. Instead
+each qube represents a security domain. In the default settings three
+qubes will be created: work, personal and unthrusted. All these
+qubes/VMs are integrated in Qubes OS onto one common desktop
+environment. This integration is provided by Application Viewer, which
+meakes it appear that all applications run on a native desktop. The
+security domain of an applications is indicated with a colored frame.
+%In this report, we will
+% asses the Qubes operating system (OS) based on chapter 7 and 8 of
+% \cite{GollmannComputerSecurity}. As Qubes OS is linux based we expect
+% to have similarities with chapter 7 ``Unix Security'' of
+% \cite{GollmannComputerSecurity}.
+
+\section{Principals} 
+
+The principals are the active entities in a security policy, they are
+the entities that can be granted or denied access. The principals of
+Qubes OS are mainly the users or the security domains/qubes.\todo{also
+different machines possible?} As Qubes OS was originally not designed
+as a multi-user system, the users are local users who are administered
+locally to the local computer and the operating system itself. This
+user is responsible for his own security. Qubes OS is a platform that
+offers the possibility to perform certain actions in a secure way by
+their isolated set-up. However, you as a user are responsible for
+using the system correctly such that the features they included to
+provide security are actually used in the foreseen way. The different
+security domains will correspond to different qubes/VMs that a user
+can setup on his machine.  Adding, removing and listing the different
+VMs can be easily done in the Qubes WM Manager, with the add and
+remove buttons or from command line in a console running in dom0,
+using the commands
+\begin{verbatim}
+qvm-create
+qvm-remove
+qvm-ls
+\end{verbatim}
+For each of these VMs the user will be able to set properties like if
+it is allowed to connect to the network, whether files can be copied
+to it. \todo{find the way to do this,
+https://www.qubes-os.org/news/2017/10/03/core3/}
+
+
+\subsection{The different security domains}
+As said before, the whole system is build up from different
+domains. There are some fixed domains like the core of the system
+dom0, the network domain and the storage domain. Next to those there
+are dedicated domains by default work, personal and unthrusted but the
+user can create as many as he wants and also disposable domains which
+are created to perform one specific task and deleted upon completion
+of this task.
+
+\subsubsection{Dom0}
+
+Dom0 is the core of the system, which manages the virtual disks of the
+other VMs, which are actually stored as files on the dom0
+filesystem. The different virtual machines share the same root file
+system in a read-only-mode. This allows centralized software
+installation and updates. For the user's directory and the settings
+for each VM seperate disk storage is used. One can install software on
+a specific VM, by installing it as the non-root user or by installing
+it in the non-standard /rw hierarchy. It will be used for displaying,
+hence as graphical user interface, managing keyboard and mouse input,
+managing the other VMs via the Qubes VM manager and system
+network. Hence dom0 functions as the thrusted computing base. If dom0
+gets comprimised the whole system is corrupted and there is no
+security left. The recomendations are that you never connect it to the
+network itself and it is not used for web surfing or working with
+files.
+
+\subsubsection{Network domain}
+
+\subsubsection{Storage domain}
+
+\subsubsection{Dedicated domains}
+
+In these domains the user can perform several actions, browsing the web, working on files, etc. For example the same web browser can be open in both the working and the unthrusted domain. In the working domain this can be used for opening your work mail and in the unthrusted domain, you can visit unknown websites. These browsers are running on virtual machines and are therefore independent of each other. This implies that if you are logged in into your work email in the web browser of the work domain, you will not be logged in when you open the web link of your work email in the unthrusted domain. Hence your work email can not be influenced by malicious software appearing in the unthrusted domain. These are the kind of setups that the Qubes OS developers envisioned when developing Qubes OS.
+
+\subsubsection{Disposable domains}
+
+Disposable domains are created to perform one single task. Once this task is completed, the domain will be gone as well. Upon clompleting the action in a disposable domain, everything of that session will be gone, opening later the same application in that disposable domain will show nothing saved from the previous session. A disposable domain can be opened from any domain by a right-click option. So after downloading a file in the work domain or personal domain you can first open it in a disposable domain, this avoids contamination of your dedicated doamin. 
+This mechanism of disposable domains is constructed following the idea of sandboxes.
+
+
 \section{Subjects}
+
+As an OS from the UNIX-like OS family, in Qubes OS
+subjects are They. processes can be implemented by commands on the
+terminal. To see the activities of CPU we should apply the command of
+“xentop”. To illustrate, from our computer we get such an output when
+we use this command:
+
+\subsection{Login and passwords} 
+\todo{TEST passwd in dom0 terminal to change password (look for password file)}
+
+In Qubes OS, login is basically done
+from the main domain called Dom0.  Since the Dom0 is more trusted than
+the other domains it is authorized for login operations.  As a single
+user OS, Qubes OS recognizes and authenticates user via password on
+the Dom0 terminal.  Changing password is also possible.  If you use
+the command of “passwd” command on Dom0 terminal, you can easily
+change your password.  In Qubes, there is no a direct password
+restriction.  You can choose any password you wish.
+
+\subsection{Shadow password files} 
+
+As it is stated in the Computer
+Security book of Gollmann, if you store your passwords in an explicit
+file, or in a VM in our Qubes OS case, it is possible for the hackers
+to obtain our all passwords even if you hash them.  (As we know, from
+the most commonly used passwords, like 123456, cracking the Hash codes
+is not an extremely rare issue for hackers even if you choose a decent
+password.)  This danger disables our gains from isolated environment.
+To prevent this we should implement shadow paging or in other words we
+should store this kind of data on shadowed VM’s or a subfile in a VM.
+This is provided by XEN and hence Qubes OS.  If we refer to the
+founder of Qubes OS, Joanna Rutkowska, she recommends to use KeePassX
+and running it in an network-isolated dedicated AppVM.
+
 \section{Objects}
-\subsection{Copy and paste between domains}
-Qubes OS supports a secure copy and paste operation between domains. The copy-paste operation happens through a clipboard. To copy text from domain A to domain B, you start by copying some text in an applications window of domain A, it will copy this into the domain's local clipboard. Then by using the key combination Ctrl-Shift-C you let Qubes know that you want to select this domain's clipboard for global copy between domains. The next step is to select the destination application in domain B and use the key combination Ctrl-Shirt-V. This will make the global clipboard avaliable to apps running in domain B. This step ensures that only the applications of domain B will get access tot the clipboard copied from domain A. The last action to take is to use the destination application specific key combination for pasting the clipboard and then you copied the text from domain A to domain B.\\
-This 'secure' copying is called secure since it does not allow VMs outside the security domain B to steal the content of the clipboard. However, it does not prevent writing from a less trusted to a more trusted domain. It leaves this responsibility to the user itself. The policy can be configured, in the sense that you can set the policy to never allow pastes into certain domains. This is done by altering the policy in /etc/qubes-rpc/policy/qubes.ClipboardPaste with the command \$anyvm  vault   deny
-\$anyvm  \$anyvm  ask (try this out in VM)
-\subsubsection{Copying from and to dom0}
+\subsection{Copy and paste between domains} 
+
+Qubes OS supports a secure
+copy and paste operation between domains.  The copy-paste operation
+happens through a clipboard.  To copy text from domain A to domain B,
+you start by copying some text in an applications window of domain A,
+it will copy this into the domain's local clipboard.  Then by using
+the key combination Ctrl-Shift-C you let Qubes know that you want to
+select this domain's clipboard for global copy between domains.  The
+next step is to select the destination application in domain B and use
+the key combination Ctrl-Shirt-V.  This will make the global clipboard
+avaliable to apps running in domain B.  This step ensures that only
+the applications of domain B will get access tot the clipboard copied
+from domain A.  The last action to take is to use the destination
+application specific key combination for pasting the clipboard and
+then you copied the text from domain A to domain B.\\ This 'secure'
+copying is called secure since it does not allow VMs outside the
+security domain B to steal the content of the clipboard.  However, it
+does not prevent writing from a less trusted to a more trusted domain.
+It leaves this responsibility to the user itself.  The policy can be
+configured, in the sense that you can set the policy to never allow
+pastes into certain domains.  This is done by altering the policy in
+/etc/qubes-rpc/policy/qubes.ClipboardPaste with the command \$anyvm
+vault deny \$anyvm \$anyvm ask (try this out in VM)
+
+\subsubsection{Copying from and to dom0} 
+
+Copying from Dom0 to another
+VM is done with the command
+\begin{verbatim}
+qvm-copy-to-vm <dest-vm><file>
+\end{verbatim}.
+The file then arrives in the destination VM in the
+~/QubesIncoming/dom0/ directory.
+
+The developers do not encourage copying files from VMs to Dom0, since
+Dom0 acts as a trusted terminal hance no user applications should be
+ran there.  In addition, one should take great care when copying into
+Dom0 since Dom0 controls the whole system and all security is lost if
+it gets compromised.  It can however be done using the following
+command in Dom0's console.  
+\begin{verbatim}
+qvm-run --pass-io <src-vm> 'cat /path/to/file_in_src_domain' > /path/to/file_name_in_dom0 
+\end{verbatim} 
+ A similar command can also be used to copy from Dom0 to other VMs if
+you do not want to use the previous command qvm-copy-to-vm for some
+reason.  
+\begin{verbatim}
+cat /path/to/file_in_dom0 | qvm-run --pass-io <dest-vm> 'cat > /path/to/file_name_in_appvm'
+\end{verbatim}
+
+\section{The architecture}
+As mentioned before, Qubes OS is originally not designed as a
+multi-user system.  A multi-user system was considered but the
+developers found to many potential attack vecctors, they believe the
+building bloks of their system are not fit to ensure security in a
+multi-user environment, so it can not be implemmented securely at the
+moment. Important to mention is that in any case, the user who
+controls Dom0 always controls the whole system. The main focus of
+Qubes OS is protecting the user from various treats, rather than
+proctecting the system from the user.
+
+However, from Qubes 4 on, the developers created several new
+management functionalities. They can be basically examined under two
+main groups called Admin API and Core Stack.
+% As it is strictly mentioned on its official website’s FAQ part, Qubes
+% is originally, regarding its security-obsessive nature, has not been a
+% multi-user system and it has no claim or pretention about supporting
+% multi-user environment, currently. Contrarily, since Qubes believes
+% that it is very difficult to ensure security in multi-user OS since
+% one controls Dom0 has a control on the overall system too. While the
+% developers were creating the Qubes OS, they used to consider some ways
+% of creating unprivileged multi-user accounts in Dom0 such that user
+% Alice didn’t have access to user Bob’s AppVMs. But they came up with
+% many threats as potential attack vectorsfrom such unprivileged user
+% account to system admin (root). Hence they decided not to implement
+% multi-user system.  Nevertheless, from Qubes 4 on, there are several
+% new management functionalities. They can be basically examined under
+% two main groups called Admin API and Core Stack.  %Note that, the next
+% two implemenatations of “Admin API” and “Core Stack” are innovations
+% peculiar to Qubes 4, hence the previous versions of Qubes did not have
+% those. To be more updated, we would rather focus on the latest version
+% i.e Qubes 4. Also we found those functionalities significant and
+% noteworthy.
+
+\subsection{Admin API}
+
+\subsection{Core stack}
+
+
 \section{Access control}
 
-%\bibliographystyle{alpha}
-%\bibliography{references}
+\bibliographystyle{alpha}
+\bibliography{cryptobib/abbrev1,cryptobib/crypto,references}
 
 \end{document}
