@@ -1,4 +1,3 @@
-
 \documentclass[runningheads,a4paper]{article}
 
 \usepackage{amssymb}
@@ -29,14 +28,6 @@ well-known computer security researcher, Joanna Rutkowska. It has been
 initially released in 2012, while its latest version of R 4.0 was
 released on March 28, 2018.
 
-\begin{figure}
-  \centering
-  \includegraphics[width=1.0\textwidth]{qubes-arch-diagram.png}
-  \caption{Qubes architecture overview
-    Source:\protect\url{https://www.qubes-os.org/doc/architecture/}}
-  \label{fig:qubesarch}
-\end{figure}
-
 Qubes OS is based on the assumption that it is impossible to create a
 bug-free desktop environment and one critical bug can ruin the
 security of the your system and have malicious software taking control
@@ -64,13 +55,22 @@ the different VMs, hence no unauthorized data flow can take place. An
 overview of the Qubes architecture is shown in
 Figure~\ref{fig:qubesarch}.
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1.0\textwidth]{qubes-arch-diagram.png}
+  \caption{Qubes architecture overview\\
+    Source: \protect\url{https://www.qubes-os.org/doc/architecture/}}
+  \label{fig:qubesarch}
+\end{figure}
+
+
 Not every app runs in its own qube for efficiency reasons. Instead
 each qube represents a security domain. In the default settings three
 qubes will be created: work, personal and unthrusted. All these
 qubes/VMs are integrated in Qubes OS onto one common desktop
 environment. This integration is provided by Application Viewer, which
 meakes it appear that all applications run on a native desktop. The
-security domain of an applications is indicated with a colored frame.
+security domain of an application is indicated with a colored frame.
 %In this report, we will
 % asses the Qubes operating system (OS) based on chapter 7 and 8 of
 % \cite{GollmannComputerSecurity}. As Qubes OS is linux based we expect
@@ -84,17 +84,19 @@ security domain of an applications is indicated with a colored frame.
 The principals are the active entities in a security policy, they are
 the entities that can be granted or denied access. The principals of
 Qubes OS are mainly the users or the security domains/qubes.\todo{also
-different machines possible?} As Qubes OS was originally not designed
+different machines possible?}When you install the system you are asked to setup the root user and one other user account. As Qubes OS is a Fedora based system the user accounts are stored in the \texttt{/etc/passwd} file. This file will have the same format as in Secion 7.2.1 in \cite{GollmannComputerSecurity}. \todo{check usernames in passwd file by cat /etc/passwd}
+
+Qubes OS was originally not designed
 as a multi-user system, the users are local users who are administered
 locally to the local computer and the operating system itself. This
-user is responsible for his own security. Qubes OS is a platform that
+user is responsible for the security of his own system. Qubes OS is a platform that
 offers the possibility to perform certain actions in a secure way by
 their isolated set-up. However, you as a user are responsible for
 using the system correctly such that the features they included to
 provide security are actually used in the foreseen way. The different
-security domains will correspond to different qubes/VMs that a user
+security domains will correspond to different qubes/AppVMs that a user
 can setup on his machine. Adding, removing and listing the different
-VMs can be easily done in the Qubes WM Manager, with the add and
+AppVMs can be easily done in the Qubes WM Manager, with the add and
 remove buttons or from command line in a console running in dom0,
 using the commands
 \begin{verbatim}
@@ -102,7 +104,7 @@ qvm-create
 qvm-remove
 qvm-ls
 \end{verbatim}
-For each of these VMs the user will be able to set properties like if
+For each of these AppVMs the user will be able to set properties like if
 it is allowed to connect to the network, whether files can be copied
 to it. \todo{find the way to do this,
 https://www.qubes-os.org/news/2017/10/03/core3/}
@@ -120,11 +122,11 @@ of this task.
 \subsubsection{Dom0}
 
 Dom0 is the core of the system, which manages the virtual disks of the
-other VMs, which are actually stored as files on the dom0
+other AppVMs, which are actually stored as files on the dom0
 filesystem. The different virtual machines share the same root file
 system in a read-only-mode. This allows centralized software
 installation and updates. For the user's directory and the settings
-for each VM seperate disk storage is used. 
+for each AppVM seperate disk storage is used. 
 %One can install software on
 %a specific VM, by installing it as the non-root user or by installing
 %it in the non-standard /rw hierarchy. 
@@ -138,18 +140,19 @@ network itself and it is not used for web surfing or working with
 files.
 
 Since dom0 is the thrusted computing base, all aspects of the Qubes
-system can be controlled using a terminal in the dom0 console. Opening
-a console windom in dom0 can be done by:
-\begin{itemize}
-\item choose Terminal Emulator in the start menu
-\item press Alt-F3, type xfce terminal and press enter twice
-\item right-click on the desktop and select Open Terminal Here
-\end{itemize}
+system can be controlled using a terminal in the dom0 console. 
+%Opening a console windom in dom0 can be done by:
+%\begin{itemize}
+%\item choose Terminal Emulator in the start menu
+%\item press Alt-F3, type xfce terminal and press enter twice
+%\item right-click on the desktop and select Open Terminal Here
+%\end{itemize}
 Alternatively to the console you can work with the Qubes VM
 manager. It supports most of the functionality provided through
-command line. It is opened automaticly when Qubes OS starts and can
-also be opened through Start $\rightarrow$ System Tools $\rightarrow$
-Qubes manager.
+command line. 
+%It is opened automaticly when Qubes OS starts and can
+%also be opened through Start $\rightarrow$ System Tools $\rightarrow$
+%Qubes manager.
 
 The GUI domain runs the X server that is used to display the user desktop and
 the window manager that allows to start and stop applications and
@@ -164,7 +167,7 @@ the user while in fact all apllications are hosted in isolated AppVMs.
 
 Qubes OS makes use of the standard Xen networking, with however one
 big change. This means it will consist of a pair of network devices,
-the frontend will reside in the VMs that want to use the network, the
+the frontend will reside in the AppVMs that want to use the network, the
 guest domain and the backend will reside in the backend
 domain. Typically this backend, that contains the core networking
 code, which includes network card drivers and various protocal stacks
@@ -176,9 +179,9 @@ failure-prone and it is good for safety to isolate them from the rest
 of the system.}, called the Network domain. The Intel VT-d technology
 is used to safely grant the unprivileged the network domain access to
 the networking hardware by safe device assigment. Network protocols
-and routing might have exploitable bugs, by putting this functionality
+and routing might have exploitable bugs. By putting this functionality
 in an unpriviledged domain, other domains will not be compromised even
-if the attack succeeds. All sensitive applications are hosted in other
+if the attack succeeds. All sensitive applications hosted in other
 domains should use network protocols that are protected by
 cryptography such as SSL, VPN or SSH.
 
@@ -201,7 +204,7 @@ when the network configuration of the network driver domain
 changes. In addition, there is no need for a DNS server in the network
 driver domain and therefore there are no ports open to the VMs.
 \todo{add VM routing table(short) and network driver domain routing
-  table(longer)}
+  table(longer) see https://www.qubes-os.org/doc/networking/}
 
 \subsubsection{Firewall domain}
 
@@ -246,14 +249,14 @@ into place to make sure the storage domain can not be abused for
 attacking the whole system. The storage devices of each VM are
 encrypted with a key only known to the AppVM and dom0, the root
 filesystem used by the AppVMs is located on a signed block device of
-which only the UpdateVM and dom0 know the signing key and the boot
+which only the UpdateVM and dom0 know the signing key. The boot
 proces is based on a thrusted platform module(TPM) and is implemented
 with the Intel TXT(thrusted execution technology). The signing of the
 block containing the root file system makes sure that alteration of
 this files can not go unnoticed, this block is not encrypted since
 then all AppVms should have access to the decryption key and hence
 when only one of the AppVMs and the storage domain are compromised by
-the same attacker, this adversary be able to alther the root file
+the same attacker, this adversary be able to alter the root file
 system. By signing the AppVMs only need the public verification key
 and hence the above scenario is unapplicable. An attacker who
 compromised the storage domain can alter the hypervisor of dom0 image
@@ -280,21 +283,20 @@ unthrusted domain, you can visit unknown websites. These browsers are
 running on virtual machines and are therefore independent of each
 other. This implies that if you are logged in into your work email in
 the web browser of the work domain, you will not be logged in when you
-open the web link of your work email in the unthrusted domain. Hence
+open the web link of your work email in the unthrusted domain. Hence,
 your work email can not be influenced by malicious software appearing
-in the unthrusted domain. These are the kind of setups that the Qubes
+in the unthrusted domain. These are the kind of secure setups that the Qubes
 OS developers envisioned when developing Qubes OS.
 
 AppVMs can be initialised with different system
-distributions. As said before, all AppVMs
+distributions. This implies that the security model of the different AppVMs depends on the chosen OS. As said before, all AppVMs
 based on the same system distribution will share the same read-only
 file system and seperate disk storage is only used for user's
 directory and per-VM settings. The root file system will be located in
 e.g. \texttt{/boot, /bin, /usr}, the private AppVM data in
-e.g. \texttt{/home, /usr/local} and \texttt{/var}. 
-Since this introduces complexity in the
-filesystem, Qubes OS will again isolate this into the previously
-mentioned storage doma which sandboxes
+e.g. \texttt{/home, /usr/local} and \texttt{/var}. (This is a linux based setup since the root file system is based on Fedora.)
+Having a shared read-only file system introduces complexity, Qubes OS will again isolate this into the previously
+mentioned storage doma. which sandboxes
 all disk and file system storage code, such that even if this gets
 compromised, no harm can be done to the rest of the system.
 
@@ -509,6 +511,25 @@ Therefore, the developers created several new
 management functionalities in Qubes OS R4.0. They can be basically examined under two
 main groups called Admin API and Core Stackv3. Next to these management functionalities there are several other improvments like
 fully virtualized VMs, multiple and more flexible disposable VM templates, a more expressive and user-friendly Qubes RPC policy system, a more powerful VM volume manager that enables us to keep VMs on external drives easier, enhanced template VM security via splitted packages and network interface, more secure backups with scrypt for stronger key derivation and enforced encryption and command-line tools with new options. In our report, we will mainly focus on the remote managing functions, namely, Admin API and Core Stack. In addition, we will briefly mention the fully virtualized VMs, since they offer a partial solution to the recently discovered meltdown and spectre attacks.
+% As it is strictly mentioned on its official website’s FAQ part, Qubes
+% is originally, regarding its security-obsessive nature, has not been a
+% multi-user system and it has no claim or pretention about supporting
+% multi-user environment, currently. Contrarily, since Qubes believes
+% that it is very difficult to ensure security in multi-user OS since
+% one controls Dom0 has a control on the overall system too. While the
+% developers were creating the Qubes OS, they used to consider some ways
+% of creating unprivileged multi-user accounts in Dom0 such that user
+% Alice didn’t have access to user Bob’s AppVMs. But they came up with
+% many threats as potential attack vectorsfrom such unprivileged user
+% account to system admin (root). Hence they decided not to implement
+% multi-user system.  Nevertheless, from Qubes 4 on, there are several
+% new management functionalities. They can be basically examined under
+% two main groups called Admin API and Core Stack.  %Note that, the next
+% two implemenatations of “Admin API” and “Core Stack” are innovations
+% peculiar to Qubes 4, hence the previous versions of Qubes did not have
+% those. To be more updated, we would rather focus on the latest version
+% i.e Qubes 4. Also we found those functionalities significant and
+% noteworthy.
 
 \subsection{Admin API}
 Admin API aims to enable users to manage the domains without direct access to dom0. Briefly, it allows the users to remotely manage multiple Qubes machines. The biggest motivation to implement this functionality was targetting the enterprise customers and corporations. The developers believe that enabling IT administrators to remotely manage multiple Qubes machines would be very useful. The Admin API would also allow the creation of a multi-user system on a Qubes machine, where each user can have different, as well as the same if desired, set of secure domains/environments. It is implemented via a dedicated semi-trusted VM. In addition, it is allowed to ask Dom0 for certain actions by using a characteristically designed qrexec-based protocol. The units by which the API might be utilised are basically Qubes OS Manager, CLI tools, remote management tools, custom tools etc. Some basic facilities of Admin API can be stated as remote manageability, GUI domain (a trusted GUI subsystem and the admin stack combined in the same AppVM), safe third party templates and so on. For the ones who have concerns about potential security gaps and vulnerabilities, the project’s and whole Qubes OS’ co-founder Joanna Rutkowska asserted the Admin API does not have an access to the lowest level of the system known as Dom0 as an endorsement of the robustness of the security. She stated that the Admin API could even be limited such that it can still allow an administrator to configure VMs, but without being able to read the system user’s data. 
