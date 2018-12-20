@@ -40,20 +40,20 @@ referred to as security by compartmentalization or security by
 isolation.  Qubes uses virtualization technology to isolate the
 different applications from each other. Next to this approach,
 sandboxing is used for different system-level components, such as
-networking and storage subsystems, again to avoid that a possible compromise in
-one of these domains, might affect the integrity of your system. As such, Qubes OS
-allows you to perform all your actions on one physical computer
-without having to worry that one attack may compromise your whole
-system. Qubes integrates all these secure containers into a unified
-desktop environment. This provides a better user experience over
-traditional methods of isolation. The different qubes are implemented
-as lightweight virtual machines(VMs), that do not interfere with each
-other.  Note that Qubes OS enables users to have copy-paste operations
-and file sharing between the different security domains, but other
-than these intrinsic mechanisms there is no information flow between
-the different VMs, hence no unauthorized data flow can take place. An
-overview of the Qubes architecture is shown in
-Figure~\ref{fig:qubesarch}.
+networking and storage subsystems, again to avoid that a possible
+compromise in one of these domains, might affect the integrity of your
+system. As such, Qubes OS allows you to perform all your actions on
+one physical computer without having to worry that one attack may
+compromise your whole system. Qubes integrates all these secure
+containers into a unified desktop environment. This provides a better
+user experience over traditional methods of isolation. The different
+qubes are implemented as lightweight virtual machines(VMs), that do
+not interfere with each other.  Note that Qubes OS enables users to
+have copy-paste operations and file sharing between the different
+security domains, but other than these intrinsic mechanisms there is
+no information flow between the different VMs, hence no unauthorized
+data flow can take place. An overview of the Qubes architecture is
+shown in Figure~\ref{fig:qubesarch}.
 
 \begin{figure}[h]
   \centering
@@ -101,7 +101,9 @@ qvm-create
 qvm-remove
 qvm-ls
 \end{verbatim}
-For each of these AppVMs the user will be able to set properties like enabling or disabling the connection of the VM to the network, whether files can be copied into it. \todo{find the way to do this,
+For each of these AppVMs the user will be able to set properties like
+enabling or disabling the connection of the VM to the network, whether
+files can be copied into it. \todo{find the way to do this,
 https://www.qubes-os.org/news/2017/10/03/core3/}
 
 
@@ -109,10 +111,10 @@ https://www.qubes-os.org/news/2017/10/03/core3/}
 As said before, the whole system is build up from different
 domains. There are some fixed domains like the core of the system
 dom0, the network domain and the storage domain. Next to those there
-are dedicated domains by default the domains work, personal and untrusted are created, but the
-user can create as many as he wants and also disposable domains which
-are created to perform one specific task and automatically deleted upon completion
-of this task.
+are dedicated domains by default the domains work, personal and
+untrusted are created, but the user can create as many as he wants and
+also disposable domains which are created to perform one specific task
+and automatically deleted upon completion of this task.
 
 \subsubsection{dom0}
 
@@ -125,14 +127,13 @@ qubes os uses separate disk storage for each virtual machine.
 %One can install software on
 %a specific VM, by installing it as the non-root user or by installing
 %it in the non-standard /rw hierarchy. 
-dom0  hosts the GUI(graphical user interface) domain and controls the
+dom0 hosts the GUI(graphical user interface) domain and controls the
 graphics device as well as input devices like the keyboard and the
-mouse. It also
-manages the other VMs via the Qubes VM manager. Hence dom0 functions as the trusted computing base. If dom0
-gets compromised the whole system is corrupted and there is no
-security left. The recomendations are that you never connect it to the
-network itself and it is not used for web surfing or working with
-files.
+mouse. It also manages the other VMs via the Qubes VM manager. Hence
+dom0 functions as the trusted computing base. If dom0 gets compromised
+the whole system is corrupted and there is no security left. The
+recomendations are that you never connect it to the network itself and
+it is not used for web surfing or working with files.
 
 Since dom0 is the trusted computing base, all aspects of the Qubes
 system can be controlled using a terminal in the dom0 console. 
@@ -160,25 +161,27 @@ the sake of the user's convenience, while in fact all applications are hosted in
 
 \subsubsection{Network domain}
 
-Qubes OS makes use of the standard Xen networking, with however, a
-big change. This means it will consist of a pair of network devices,
-the frontend will reside in the AppVMs that want to use the network, whereas the
-guest domain and the backend will reside in the backend
-domain. Typically this backend, that contains the core networking
-code, which includes network card drivers and various protocol stacks
-runs in the kernel. In Qubes OS, this backend will not be the dom0
-domain, but a driver domain\footnote{A driver domain is an
-unpriviledged Xen domain that handles one specific piece of
-hardware. The main idea is again that hardware drivers are
-failure-prone and it is good for safety to isolate them from the rest
-of the system.}, called the Network domain. The Intel VT-d technology
-is used to safely grant the unprivileged network domain access to
-the networking hardware by safe device assignment. Network protocols
-and routing might have exploitable bugs. By putting this functionality
-in an unprivileged domain, other domains will not be compromised even
-if the attack succeeds. All sensitive applications hosted in other
-domains should use network protocols that are protected by
-cryptography such as SSL, VPN or SSH.
+Qubes OS makes use of the standard Xen networking with, however, a big
+change. More information on the standard Xen networking can be found
+on the xenproject wiki \cite{XenNetworking}. This means it will
+consist of a pair of network devices, the frontend will reside in the
+AppVMs that want to use the network, whereas the guest domain and the
+backend will reside in the backend domain. Typically this backend,
+that contains the core networking code, which includes network card
+drivers and various protocol stacks runs in the kernel. In Qubes OS,
+this backend will not be the dom0 domain, but a driver
+domain\footnote{A driver domain is an unpriviledged Xen domain that
+handles one specific piece of hardware. The main idea is again that
+hardware drivers are failure-prone and it is good for safety to
+isolate them from the rest of the system.}, called the Network
+domain. The Intel VT-d technology is used to safely grant the
+unprivileged network domain access to the networking hardware by safe
+device assignment. Network protocols and routing might have
+exploitable bugs. By putting this functionality in an unprivileged
+domain, other domains will not be compromised even if the attack
+succeeds. All sensitive applications hosted in other domains should
+use network protocols that are protected by cryptography such as SSL,
+VPN or SSH.
 
 Routed networking is used as well as network address tranlation (NAT)
 at each network hop to eliminate layer 2 attacks coming from a
@@ -209,7 +212,7 @@ network-level policies. By default Qubes OS generates one firewall VM
 but as with the dedicated VMs users can create more firewall VMs if
 required. The firewall rules of a specific VM are stored in an XML
 file \texttt{/var/lib/qubes/appvms/<vm-name>/firewall.xml} in that VM's
-directory in dom0 . Hence the rules can be adapted from the dom0
+directory in dom0 . Hence, the rules can be adapted from the dom0
 domain, either by selecting the specific VM in the Qubes manager and
 using the firewall button or through the \texttt{qvm-firewall} command
 in the terminal. Since from version R4.0 on some rules are no longer
@@ -251,14 +254,14 @@ block containing the root file system makes sure that alteration of
 this files can not go unnoticed. This block is not encrypted since
 then all AppVms should have access to the decryption key and hence
 when only one of the AppVMs and the storage domain are compromised by
-the same attacker, this adversary be able to alter the root file
+the same attacker, this adversary is able to alter the root file
 system. By signing the AppVMs only need the public verification key
 and hence the above scenario is unapplicable. An attacker who
 compromised the storage domain can alter the hypervisor of dom0 image
 stored in the boot partition through his access to the disk
-controller. When booting the system the compromised hypervisor will be
+controller. When booting the system, the compromised hypervisor will be
 loaded and started, but when a trusted boot scheme in this case based
-on Intel TXT is used the TPM will not release the secret keys needed
+on Intel TXT is used, the TPM will not release the secret keys needed
 to decrypt the files of the different VMs, so the system will not boot
 properly and the adversary does not gain access to the rest of the
 filesystems. Hence, the compromise of the storage domain can lead to a
@@ -300,7 +303,7 @@ compromised, no harm can be done to the rest of the system.
 \subsubsection{Disposable domains}
 
 Disposable domains are created to perform one single task. Once this
-task is completed, the domain will be gone as well. Upon completing
+task is completed, the domain will be closed as well. Upon completing
 the action in a disposable domain, everything of that session will be
 gone, opening later the same application in that disposable domain
 will show nothing saved from the previous session. A disposable domain
@@ -313,10 +316,11 @@ following the idea of sandboxes.
 
 \section{Subjects}
 
-As an OS from the UNIX-like OS family, in Qubes OS
-subjects are processes. They can be implemented by commands on the
+As Qubes OS is Fedora based, it is an OS from the UNIX-like OS family,
+so the
+subjects are processes. They can be started by commands in the
 terminal. To see the activities of CPU we should apply the command of
-"xentop". To illustrate, from our computer we get such an output when
+"xentop". To illustrate, our computer gives the following output when
 we use this command:
 \todo{difference between real uid and effecctive uid? can you do dom0
   actions from terminal in the personal?}\todo{no groups?}
@@ -341,28 +345,33 @@ change your password.  In Qubes, there is no a direct password
 restriction.  You can choose any password you wish.
 
 \subsection{Shadow password files} 
-
-As it is stated in the Computer
-Security book of Gollmann, if you store your passwords in an explicit
-file, or in a VM in our Qubes OS case, it is possible for the hackers
-to obtain our all passwords even if you hash them.  (As we know, from
-the most commonly used passwords, like 123456, cracking the Hash codes
-is not an extremely rare issue for hackers even if you choose a decent
-password.)  This danger might disable our gains from isolated environment.
-To prevent this we should implement shadow paging or in other words we
-should store this kind of data on shadowed VM's or a subfile in a VM.
-This is provided by XEN and hence Qubes OS.  If we refer to the
-founder of Qubes OS, Joanna Rutkowska, she recommends to use KeePassX
-and running it in a network-isolated dedicated AppVM.
-\todo{uses password salting?, check /etc/shadow} 
+\textcolor{red}{
+As it is stated in the Computer Security book of Gollmann
+\cite{GollmannComputerSecurity}, if you store your passwords in an
+explicit file, or in a VM in our Qubes OS case, it is possible for the
+hackers to obtain the passwords even if you hash them.  
+%(As we
+%know, from the most commonly used passwords, like 123456, cracking the
+%Hash codes is not an extremely rare issue for hackers even if you
+%choose a decent password.)  
+This danger might disable our gains from
+isolated environment. To prevent this we should implement shadow
+paging or in other words we should store this kind of data on shadowed
+VM's or a subfile in a VM. This is provided by XEN and hence Qubes
+OS. If we refer to the founder of Qubes OS, Joanna Rutkowska, she
+recommends to use KeePassX and running it in a network-isolated
+dedicated AppVM.}  \todo{uses password salting?, check /etc/shadow}
 
 \section{Objects}
 
-The objects of the access control are the resources, this includes files, directories,
-memory devices and I/O devices. These resources are organised in a
-three-structured system. \todo{how are the resources organised in
-  qubes os? is it three-structured system} These objects always exist
-in a specific domain and hence are accesible in that domain. 
+The objects of the access control are the resources, this includes
+files, directories, memory devices and I/O devices. These resources
+are organised in a three-structured system. \todo{how are the
+resources organised in qubes os? is it three-structured system} These
+objects always exist in a specific domain and hence are accesible in
+that domain with the access structure that is defined in this VM. With
+this we mean that the access control of these object will depend on
+the chosen operating system for this particular VM. 
 
 However, the Qubes framework also has a need for communication between
 different domains. For instance, when a user selects an application in
@@ -402,14 +411,14 @@ allowed, what user account this program should run the target VM under
 and what VM to redirect the execution to. Creating and maintaining
 these policy files is again the responsibility of the user. When the
 policy file does not exist upon a RPC request, the user is prompted to
-create one manually. If after the prompting there is still no policy
-file in place then the action is denied. Hence by default the action
+create one manually. If after the prompting, there is still no policy
+file in place then the action is denied. Hence, by default the action
 is denied unless the user explicitely allows this request by creating
 a line in the policy file. Next to this policy check,
 the actual RPC action should exist on the target VM, this means
 \texttt{/etc/qubes-rpc/RPCrequest} must exist containing the file name
-of the program that will be invoke upon this request or being the
-program itself. When the program itself is placed here it must have
+of the program that will be invoked upon this request or the
+program itself. When the program itself is placed here, it must have
 the execuatble permission set. \todo{this is set as chmod -x in linux,
   so depending on os that the VM uses it internally uses these
   security features.}
@@ -443,8 +452,7 @@ However, it does not prevent writing from a less trusted to a more
 trusted domain.  It leaves this responsibility to the user itself.
 The policy can be configured, in the sense that you can set the policy
 to never allow pastes into certain domains.  This is done by altering
-the policy in /etc/qubes-rpc/policy/qubes. ClipboardPaste with the
-command \$anyvm vault deny \$anyvm \$anyvm ask (try this out in VM)
+the policy in /etc/qubes-rpc/policy/qubes. 
 \todo{Unfortunately, the default Terminal application is the GNOME
 Terminal (v3.22.2) which has already mapped Ctrl-Shift-v. Therefore,
 if you want to paste into a Terminal, you have to start at least a
@@ -455,31 +463,31 @@ really silly usability bug. }
 
 \subsubsection{Copying from and to dom0} 
 
-Copying from dom0 to another
-VM is done with the command
-\begin{verbatim}
-qvm-copy-to-vm <dest-vm><file>
-\end{verbatim}.
-The file then arrives in the destination VM in the
-~/QubesIncoming/dom0/ directory.
+%Copying from dom0 to another
+%VM is done with the command
+%\begin{verbatim}
+%qvm-copy-to-vm <dest-vm><file>
+%\end{verbatim}.
+%The file then arrives in the destination VM in the
+%~/QubesIncoming/dom0/ directory.
 
 The developers do not encourage copying files from VMs to dom0, since
 dom0 acts as a trusted terminal hance no user applications should be
 ran there.  In addition, one should take great care when copying into
 dom0 since dom0 controls the whole system and all security is lost if
-it gets compromised.  It can however be done using the following
-command in dom0's console.  
-\begin{verbatim}
-qvm-run --pass-io <src-vm> 'cat /path/to/file_in_src_domain' > /path/to/file_name_in_dom0 
-\end{verbatim} 
- A similar command can also be used to copy from dom0 to other VMs if
-you do not want to use the previous command qvm-copy-to-vm for some
-reason.  
-\begin{verbatim}
-cat /path/to/file_in_dom0 | qvm-run --pass-io <dest-vm> 'cat > /path/to/file_name_in_appvm'
-\end{verbatim}
+it gets compromised.  It can however be done through commands in dom0's console.  
+%\begin{verbatim}
+%qvm-run --pass-io <src-vm> 'cat /path/to/file_in_src_domain' > /path/to/file_name_in_dom0 
+%\end{verbatim} 
+% A similar command can also be used to copy from dom0 to other VMs if
+%you do not want to use the previous command qvm-copy-to-vm for some
+%reason.  
+%\begin{verbatim}
+%cat /path/to/file_in_dom0 | qvm-run --pass-io <dest-vm> 'cat > /path/to/file_name_in_appvm'
+%\end{verbatim}
 
 \subsection{Logging}
+
 Operating systems are developed by human beings which means they can
 have some flaws inside them. In order to detect this flaws and keep
 track of security breaches operating systems do logging a lot. The
@@ -492,22 +500,36 @@ information, the names of these log files are respectively
 and \texttt{qubesdb.<vmname>.log}.
 
 \section{Management fucntionalities}
-\subsection{Multi-users}
-As mentioned before, Qubes OS is originally not designed as a
-multi-user system.  A multi-user system was considered but the
-developers found to many potential attack vecctors, they believe the
-building bloks of their system are not fit to ensure security in a
-multi-user environment, so it can not be implemmented securely at the
-moment. Important to mention is that in any case, the user who
-controls dom0 always controls the whole system. The main focus of
-Qubes OS is protecting the user from various treats, rather than
-proctecting the system from the user.
+\subsection{Multi-users} 
 
-However, in order to become an operating system that can be used in corperate environments or large organisations, there must be a mechanism in Qubes OS to make it remotely manageable by entities such as IT departments.
-Therefore, the developers created several new
-management functionalities in Qubes OS R4.0. They can be basically examined under two
-main groups called Admin API and Core Stackv3. Next to these management functionalities there are several other improvments like
-fully virtualized VMs, multiple and more flexible disposable VM templates, a more expressive and user-friendly Qubes RPC policy system, a more powerful VM volume manager that enables us to keep VMs on external drives easier, enhanced template VM security via splitted packages and network interface, more secure backups with scrypt for stronger key derivation and enforced encryption and command-line tools with new options. In our report, we will mainly focus on the remote managing functions, namely, Admin API and Core Stack. In addition, we will briefly mention the fully virtualized VMs, since they offer a partial solution to the recently discovered meltdown and spectre attacks.
+As mentioned before, Qubes OS is originally
+not designed as a multi-user system.  A multi-user system was
+considered but the developers found to many potential attack vecctors,
+they believe the building bloks of their system are not fit to ensure
+security in a multi-user environment, so it can not be implemmented
+securely at the moment. Important to mention is that in any case, the
+user who controls dom0 always controls the whole system. The main
+focus of Qubes OS is protecting the user from various treats, rather
+than proctecting the system from the user.
+
+However, in order to become an operating system that can be used in
+corperate environments or large organisations, there must be a
+mechanism in Qubes OS to make it remotely manageable by entities such
+as IT departments.  Therefore, the developers created several new
+management functionalities in Qubes OS R4.0. They can be basically
+examined under two main groups called Admin API and Core Stackv3. Next
+to these management functionalities there are several other
+improvments like fully virtualized VMs, multiple and more flexible
+disposable VM templates, a more expressive and user-friendly Qubes RPC
+policy system, a more powerful VM volume manager that enables us to
+keep VMs on external drives easier, enhanced template VM security via
+splitted packages and network interface, more secure backups with
+scrypt for stronger key derivation and enforced encryption and
+command-line tools with new options. In our report, we will mainly
+focus on the remote managing functions, namely, Admin API and Core
+Stack. In addition, we will briefly mention the fully virtualized VMs,
+since they offer a partial solution to the recently discovered
+meltdown and spectre attacks.
 % As it is strictly mentioned on its official website's FAQ part, Qubes
 % is originally, regarding its security-obsessive nature, has not been a
 % multi-user system and it has no claim or pretention about supporting
@@ -528,58 +550,157 @@ fully virtualized VMs, multiple and more flexible disposable VM templates, a mor
 % i.e Qubes 4. Also we found those functionalities significant and
 % noteworthy.
 
-\subsection{Admin API}
-Admin API aims to enable users to manage the domains without direct access 
-to dom0. Briefly, it allows the users to remotely manage multiple Qubes machines. 
-The biggest motivation to implement this functionality was targetting the 
-enterprise customers and corporations. The developers believe that enabling 
-IT administrators to remotely manage multiple Qubes machines would be very useful. 
-The Admin API would also allow the creation of a multi-user system on a Qubes machine, 
-where each user can have different, as well as the same if desired, set of secure domains/environments. 
-It is implemented via a dedicated semi-trusted VM. In addition, it is allowed to 
-ask dom0 for certain actions by using a characteristically designed qrexec-based protocol. 
-The units by which the API might be utilised are basically Qubes OS Manager, CLI tools, 
-remote management tools, custom tools etc. Some basic facilities of Admin API can be stated 
-as remote manageability, GUI domain (a trusted GUI subsystem and the admin stack combined 
-in the same AppVM), safe third party templates and so on. For the ones who have concerns 
-about potential security gaps and vulnerabilities, the project's and whole Qubes OS' 
-co-founder Joanna Rutkowska asserted the Admin API does not have an access to the lowest level 
-of the system known as dom0 as an endorsement of the robustness of the security. She stated that 
-the Admin API could even be limited such that it can still allow an administrator to configure VMs, 
-but without being able to read the system user's data. 
+\subsection{Admin API} 
 
-\subsection{Core stack}
-By its official developers' definition, Qubes Core Stack is the core component of Qubes OS which connects all the other components together. Apart from the core (main) component, these components mainly are VM-located core agents, VM-customizations, Qubes GUI virtualization, GUI domain customization, the AdminVM distribution, the XEN hypervisor, multiple Qubes Apps, several ready-to-use templates, salt stacks integration etc.
-By doing this, it enables the users and admins to contact with each other and configure the system as well. 
+Admin API aims to enable users to manage the
+domains without direct access to dom0. Briefly, it allows the users to
+remotely manage multiple Qubes machines.  The biggest motivation to
+implement this functionality was targetting the enterprise customers
+and corporations. The developers believe that enabling IT
+administrators to remotely manage multiple Qubes machines would be
+very useful.  The Admin API would also allow the creation of a
+multi-user system on a Qubes machine, where each user can have
+different, as well as the same if desired, set of secure
+domains/environments.  It is implemented via a dedicated semi-trusted
+VM. In addition, it is allowed to ask dom0 for certain actions by
+using a characteristically designed qrexec-based protocol.  The units
+by which the API might be utilised are basically Qubes OS Manager, CLI
+tools, remote management tools, custom tools etc. Some basic
+facilities of Admin API can be stated as remote manageability, GUI
+domain (a trusted GUI subsystem and the admin stack combined in the
+same AppVM), safe third party templates and so on. For the ones who
+have concerns about potential security gaps and vulnerabilities, the
+project's and whole Qubes OS' co-founder Joanna Rutkowska asserted the
+Admin API does not have an access to the lowest level of the system
+known as dom0 as an endorsement of the robustness of the security. She
+stated that the Admin API could even be limited such that it can still
+allow an administrator to configure VMs, but without being able to
+read the system user's data.
 
-\subsection{Fully Virtualized VMs (HVMs)}
-By default, VMs of Qubes OS were using para-virtualization technology, chosen before for being easier to implement and having higher performance. However, Qubes OS, from 4.0 version on, implements fully virtualized or hardware assisted VMs to offer better protection against Meltdown attacks. According to the Qubes team, full virtualization might also provide protection against at least one of the Spectre vulnerabilities. Because in this case the attacker needs to exploit the hypervisor, which is obviously more difficult than exploiting a full OS. Potential attacks would also be solely read-only and the hackers would not be able to install a backdoor in the system through either Meltdown or Spectre. 
+\subsection{Core stack} 
 
-\section{U2F}
-U2F is a well-known, widespread second level authentication protocol stands for Universal Second Factor. It has been successfully adopted by large scale corporations and even govenrment organizations including Facebook, Gmail, Dropbox, GitHub, the UK government and so on. It basically depends on what you have or you are given for a temporary and preferably short time period rather than what you know since the latter one can be acquired by malicious people, devices or algorithms. As a security-dedicated OS, Qubes has developed its U2F protocol, in other words have modified its systems such that to satisfy the U2F standards imposed by FIDO Alliance. 
+By its official developers' definition, Qubes
+Core Stack is the core component of Qubes OS which connects all the
+other components together. Apart from the core (main) component, these
+components mainly are VM-located core agents, VM-customizations, Qubes
+GUI virtualization, GUI domain customization, the AdminVM
+distribution, the XEN hypervisor, multiple Qubes Apps, several
+ready-to-use templates, salt stacks integration etc.  By doing this,
+it enables the users and admins to contact with each other and
+configure the system as well.
 
-U2F, primarily uses the hardware devices called as tokens as second factors. It is a developed version of two-step authentication in which the user basically receives the second level authentication code via an Application exists in the user's smartphone or SMS. However this classical two-step authentications is vulnerable to phishing and the man-in-the-middle attacks because application requesting the two-step authentication code is typically not itself authenticated by the user. In other words, users can accidentally give their codes to hackers since they can not always be sure who is really asking for the code. In the U2F model, on the other hand, ensuring the reliability of the requesting authentication is browser's responsibility hence the when the application has been received our tokens knows the request is coming from a trustworthy web application. 
-\subsection{Qubes U2F}
-In a conventional U2F, both web browsers and USB stacks and thus U2F tokens are all running in the same monolithic OS due to the nature of the classical, non-isolated, operating systems. In this case we presume that the browser is reliable and hence we enable all kind of browsers to access all of the keys stored on the U2F token. By this way, the user has no true control over which browser can access to which keys and for which service or purpose. Therefore, in case a browser is compromised every single key is jeopardized to be stolen. In addition, since the USB stack is also in the same monolithic OS, the system is vulnerable to possible attacks coming from BadUSB.
+\subsection{Fully Virtualized VMs (HVMs)} 
 
-In Qubes OS, on the other hand, as entire Qubes working scheme, the compartmentalisation principle is strictly implemented. That is to say, the browsers and the USB stacks are strictly separated into different qubes in order to guarantee their isolation.  The Qubes U2F Proxy then allows the token connected to the USB stack in one qube to communicate with the browser in a separate qube if the access conditions are met. Briefly, we assume neither the browser nor the USB stack for each other and the entire units of the operating system. Our proxy forwards only the data necessary to actually perform the authentication, leaving all unnecessary data out, so that it would not  become a vector of attack.
-\subsubsection{Qubes U2F Proxy}
-The Qubes U2F Proxy has frontend and backend. The frontend runs in the same qube with the browser and acts as a fake USB-like HID device using \texttt{uhid}. The backend runs in \texttt{sys-usb} and behaves like a browser. This is done by using the \texttt{u2flib\_host} reference library. Prospectively, Qubes plans to set up Qubes U2F Proxy with a software token in a special qube instead of using physical hardware token. It is similar to smart card implementation without having a phsical smart card.
+By default, VMs of Qubes OS
+were using para-virtualization technology, chosen before for being
+easier to implement and having higher performance. However, Qubes OS,
+from 4.0 version on, implements fully virtualized or hardware assisted
+VMs to offer better protection against Meltdown attacks. According to
+the Qubes team, full virtualization might also provide protection
+against at least one of the Spectre vulnerabilities. Because in this
+case the attacker needs to exploit the hypervisor, which is obviously
+more difficult than exploiting a full OS. Potential attacks would also
+be solely read-only and the hackers would not be able to install a
+backdoor in the system through either Meltdown or Spectre.
 
-One very important assumption of U2F is that the browser verifies every request sent to the U2F token â€” in particular, that the web application sending an authentication request matches the application that would be authenticated by answering that request (in order to prevent, e.g., a phishing site from sending an authentication request for your bankâ€™s site). With the WebUSB feature in Chrome, however, a malicious website can bypass this safeguard by connecting directly to the token instead of using the browserâ€™s U2F API.
-The Qubes U2F Proxy also prevents this kind of attacks by implementing an additional verification layer. This verification layer allows you to enforce, for example, that the web browser in your \texttt{Facebook} qube can only access the U2F key associated with \texttt{https://facebook.com}. This means that if anything in your  \texttt{Facebook} qube were compromised, it would still not be able to access the U2F keys on your token for any other websites or services, like your email and bank accounts. 
-\subsubsection{Installation of Qubes U2F Proxy}
-The Qubes U2F Proxy tool is supported by Qubes 3.2 and 4.0. It requires a \texttt{sys-usb} qube that holds the USB stack, which is the default configuration in most Qubes OS installations. For dom0 the required commands are as follows:
-\begin{verbatim}
-$ sudo qubes-dom0-update qubes-u2f-dom0
-$ qvm-service --enable work qubes-u2f-proxy
+\section{U2F} 
+
+U2F is a well-known, widespread second level
+authentication protocol stands for Universal Second Factor. It has
+been successfully adopted by large scale corporations and even
+govenrment organizations including Facebook, Gmail, Dropbox, GitHub,
+the UK government and so on. It basically depends on what you have or
+you are given for a temporary and preferably short time period rather
+than what you know since the latter one can be acquired by malicious
+people, devices or algorithms. As a security-dedicated OS, Qubes has
+developed its U2F protocol, in other words have modified its systems
+such that to satisfy the U2F standards imposed by FIDO Alliance.
+
+U2F, primarily uses the hardware devices called as tokens as second
+factors. It is a developed version of two-step authentication in which
+the user basically receives the second level authentication code via
+an Application exists in the user's smartphone or SMS. However this
+classical two-step authentications is vulnerable to phishing and the
+man-in-the-middle attacks because application requesting the two-step
+authentication code is typically not itself authenticated by the
+user. In other words, users can accidentally give their codes to
+hackers since they can not always be sure who is really asking for the
+code. In the U2F model, on the other hand, ensuring the reliability of
+the requesting authentication is browser's responsibility hence the
+when the application has been received our tokens knows the request is
+coming from a trustworthy web application.
+
+\subsection{Qubes U2F} 
+
+In a conventional U2F, both web browsers and
+USB stacks and thus U2F tokens are all running in the same monolithic
+OS due to the nature of the classical, non-isolated, operating
+systems. In this case we presume that the browser is reliable and
+hence we enable all kind of browsers to access all of the keys stored
+on the U2F token. By this way, the user has no true control over which
+browser can access to which keys and for which service or
+purpose. Therefore, in case a browser is compromised every single key
+is jeopardized to be stolen. In addition, since the USB stack is also
+in the same monolithic OS, the system is vulnerable to possible
+attacks coming from BadUSB.
+
+In Qubes OS, on the other hand, as entire Qubes working scheme, the
+compartmentalisation principle is strictly implemented. That is to
+say, the browsers and the USB stacks are strictly separated into
+different qubes in order to guarantee their isolation.  The Qubes U2F
+Proxy then allows the token connected to the USB stack in one qube to
+communicate with the browser in a separate qube if the access
+conditions are met. Briefly, we assume neither the browser nor the USB
+stack for each other and the entire units of the operating system. Our
+proxy forwards only the data necessary to actually perform the
+authentication, leaving all unnecessary data out, so that it would not
+become a vector of attack.
+
+\subsubsection{Qubes U2F Proxy} 
+
+The Qubes U2F Proxy has frontend and
+backend. The frontend runs in the same qube with the browser and acts
+as a fake USB-like HID device using \texttt{uhid}. The backend runs in
+\texttt{sys-usb} and behaves like a browser. This is done by using the
+\texttt{u2flib\_host} reference library. Prospectively, Qubes plans to
+set up Qubes U2F Proxy with a software token in a special qube instead
+of using physical hardware token. It is similar to smart card
+implementation without having a phsical smart card.
+
+One very important assumption of U2F is that the browser verifies
+every request sent to the U2F token â€” in particular, that the web
+application sending an authentication request matches the application
+that would be authenticated by answering that request (in order to
+prevent, e.g., a phishing site from sending an authentication request
+for your bankâ€™s site). With the WebUSB feature in Chrome, however, a
+malicious website can bypass this safeguard by connecting directly to
+the token instead of using the browserâ€™s U2F API.  The Qubes U2F
+Proxy also prevents this kind of attacks by implementing an additional
+verification layer. This verification layer allows you to enforce, for
+example, that the web browser in your \texttt{Facebook} qube can only
+access the U2F key associated with \texttt{https://facebook.com}. This
+means that if anything in your \texttt{Facebook} qube were
+compromised, it would still not be able to access the U2F keys on your
+token for any other websites or services, like your email and bank
+accounts.
+
+\subsubsection{Installation of Qubes U2F Proxy} 
+
+The Qubes U2F Proxy
+tool is supported by Qubes 3.2 and 4.0. It requires a \texttt{sys-usb}
+qube that holds the USB stack, which is the default configuration in
+most Qubes OS installations. For dom0 the required commands are as
+follows:
+\begin{verbatim} $ sudo qubes-dom0-update qubes-u2f-dom0 $ qvm-service
+--enable work qubes-u2f-proxy
 \end{verbatim}
 
+\nocite{*}
 
-%\section{Access control}
 
 \bibliographystyle{alpha}
 
-\bibliography{cryptobib/abbrev1,cryptobib/crypto,references}
+\bibliography{references}
+
 
 \end{document}
