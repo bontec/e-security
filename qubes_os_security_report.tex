@@ -75,15 +75,16 @@ security domain of an application is indicated with a colored frame.
 % \cite{GollmannComputerSecurity}. As Qubes OS is linux based we expect
 % to have similarities with chapter 7 ``Unix Security'' of
 % \cite{GollmannComputerSecurity}.
-\todo{check out https://www.qubes-os.org/doc/tools/ for experiments}
-\todo{test qubes\_guid in dom0 terminal:  qubes\_guid} %-d domain_id [-c color] [-l label_index] [-i icon name, no suffix] [-v] [-q]}
+%\todo{check out https://www.qubes-os.org/doc/tools/ for experiments}
+%\todo{test qubes\_guid in dom0 terminal:  qubes\_guid} %-d domain_id [-c color] [-l label_index] [-i icon name, no suffix] [-v] [-q]}
 
 \section{Principals} 
 
 The principals are the active entities in a security policy, they are
 the entities that can be granted or denied access. The principals of
-Qubes OS are mainly the users or the security domains/qubes.\todo{also
-different machines possible?} As Qubes OS was originally not designed
+Qubes OS are mainly the users or the security domains/qubes.
+%\todo{also different machines possible?} 
+As Qubes OS was originally not designed
 as a multi-user system, the users are local users who are administered
 locally to the local computer and the operating system itself. This
 user is responsible for his own security. Qubes OS is a platform that
@@ -103,16 +104,17 @@ qvm-ls
 \end{verbatim}
 For each of these AppVMs the user will be able to set properties like
 enabling or disabling the connection of the VM to the network, whether
-files can be copied into it. \todo{find the way to do this,
-https://www.qubes-os.org/news/2017/10/03/core3/}
+files can be copied into it. 
+%\todo{find the way to do this,
+%https://www.qubes-os.org/news/2017/10/03/core3/}
 
 
 \subsection{The different domains}
 As said before, the whole system is build up from different
 domains. There are some fixed domains like the core of the system
 dom0, the network domain and the storage domain. Next to those there
-are dedicated domains by default the domains work, personal and
-untrusted are created, but the user can create as many as he wants and
+are dedicated domains by default the domains work, personal,
+untrusted and vault are created, but the user can create as many as he wants and
 also disposable domains which are created to perform one specific task
 and automatically deleted upon completion of this task.
 
@@ -201,8 +203,8 @@ setup assures the AppVM networking configuration can remain unchanged
 when the network configuration of the network driver domain
 changes. In addition, there is no need for a DNS server in the network
 driver domain and therefore there are no ports open to the VMs.
-\todo{add VM routing table(short) and network driver domain routing
-  table(longer)see https://www.qubes-os.org/doc/networking/}
+%\todo{add VM routing table(short) and network driver domain routing
+%  table(longer)see https://www.qubes-os.org/doc/networking/}
 
 \subsubsection{Firewall domain}
 
@@ -221,8 +223,7 @@ however they can still be adapted with the terminal command. A last
 important note is that the size of the \texttt{iptables} script is
 limited to 3kB, when this limit is exceeded the corresponding qube will
 not start. Enforcing rules on the qube itself can circumvent this
-limit.\todo{print screen of default rules through qubes manager or
-  terminal}
+limit. %\todo{print screen of default rules through qubes manager or terminal}
 
 \subsubsection{Storage domain}
 
@@ -320,32 +321,29 @@ As Qubes OS is Fedora based, it is an OS from the UNIX-like OS family,
 so the
 subjects are processes. They can be started by commands in the
 terminal. To see the activities of CPU we should apply the command of
-"xentop". To illustrate, our computer gives the following output when
-we use this command:
-\todo{difference between real uid and effecctive uid? can you do dom0
-  actions from terminal in the personal?}\todo{no groups?}
+"xentop". 
+%\todo{difference between real uid and effecctive uid? can you do dom0
+%  actions from terminal in the personal?}\todo{no groups?}
 
 \subsection{Login and passwords} 
-\todo{TEST passwd in dom0 terminal to change password (look for
-  password file, as in unix in /etc/passwd?) what does it mean to have
-an empty string for the password in the password file, in unix this
-means no password so free access,* for password means no login
-possible as in unix? password file stores only hashes of
-passwords?}\todo{probably no passwords in /etc/password but shadow
-password file in /.secure/etc/passwd that can only be accessed by
-root}
+%\todo{TEST passwd in dom0 terminal to change password (look for
+%  password file, as in unix in /etc/passwd?) what does it mean to have
+%an empty string for the password in the password file, in unix this
+%means no password so free access,* for password means no login
+%possible as in unix? password file stores only hashes of
+%passwords?}\todo{probably no passwords in /etc/password but shadow
+%password file in /.secure/etc/passwd that can only be accessed by
+%root}
 
 In Qubes OS, login is basically done
 from the main domain called dom0.  Since the dom0 is more trusted than
 the other domains it is authorized for login operations.  As a single
 user OS, Qubes OS recognizes and authenticates user via password on
-the dom0 terminal.  Changing password is also possible.  If you use
+the dom0 terminal. A password has to be at least eight characters long, it should not contain the username and can not be a palindrome. Also it is checked against a dictionary of frequent used passwords to prevent users from using these. Changing password is also possible.  If you use
 the command of "passwd" command on dom0 terminal, you can easily
-change your password.  In Qubes, there is no a direct password
-restriction.  You can choose any password you wish.
+change your password.  When changing the password as an experiment we found out it must be significantly different from the previous one, adding a character or removing a character is not enough, it is also not allowed to keep the previous one but if you fail to put in an acceptable password after three tries it goes back to the previous password. The password file can be found in %\texttt{\etc\passwd}. It does not hold the passwords, for security reasons they are stored in the shadow password file. The password file of our testmachine is shown in Figure \ref{passwdfile}. The permissions for the password file are \texttt{-rw-r--r--}, this file permissions are listed as in unix based systems since the base of Qubes OS is Fedora. Hence, the owner of the password file has read and write permissions and the group and other have only read permissions.
 
 \subsection{Shadow password files} 
-\textcolor{red}{
 As it is stated in the Computer Security book of Gollmann
 \cite{GollmannComputerSecurity}, if you store your passwords in an
 explicit file, or in a VM in our Qubes OS case, it is possible for the
@@ -356,18 +354,16 @@ hackers to obtain the passwords even if you hash them.
 %choose a decent password.)  
 This danger might disable our gains from
 isolated environment. To prevent this we should implement shadow
-paging or in other words we should store this kind of data on shadowed
-VM's or a subfile in a VM. This is provided by XEN and hence Qubes
-OS. If we refer to the founder of Qubes OS, Joanna Rutkowska, she
-recommends to use KeePassX and running it in a network-isolated
-dedicated AppVM.}  \todo{uses password salting?, check /etc/shadow}
+paging or in other words we should store this kind of data on shadowed file. The shadow password file can be found in %\texttt{\etc\shadow} and as it should, it is not accessible from a user log in. If we refer to the founder of Qubes OS, Joanna Rutkowska, she
+recommends to use KeePassX for password storage and running it in a network-isolated
+dedicated AppVM.  
 
 \section{Objects}
 
 The objects of the access control are the resources, this includes
 files, directories, memory devices and I/O devices. These resources
-are organised in a three-structured system. \todo{how are the
-resources organised in qubes os? is it three-structured system} These
+are organised in a three-structured system, like in unix systems since Qubes OS is Fedora based.
+These
 objects always exist in a specific domain and hence are accesible in
 that domain with the access structure that is defined in this VM. With
 this we mean that the access control of these object will depend on
@@ -419,15 +415,15 @@ the actual RPC action should exist on the target VM, this means
 \texttt{/etc/qubes-rpc/RPCrequest} must exist containing the file name
 of the program that will be invoked upon this request or the
 program itself. When the program itself is placed here, it must have
-the execuatble permission set. \todo{this is set as chmod -x in linux,
-  so depending on os that the VM uses it internally uses these
-  security features.}
+the execuatble permission set. %\todo{this is set as chmod -x in linux,
+ % so depending on os that the VM uses it internally uses these
+ % security features.}
 
 As example we show the RPC policy for copying a file as it was created
-in dom0.
-\todo{experiment create policy file for FileCopy as in
-  https://www.qubes-os.org/doc/rpc-policy/ and test whether it is true
-  that the first applicable rule grants or denies access.}
+in dom0. The default RPC policy file is shown in Figure \ref{}. 
+%\todo{experiment create policy file for FileCopy as in
+ % https://www.qubes-os.org/doc/rpc-policy/ and test whether it is true
+ % that the first applicable rule grants or denies access.}
 
 \subsection{Copy and paste between domains} 
 
@@ -453,13 +449,13 @@ trusted domain.  It leaves this responsibility to the user itself.
 The policy can be configured, in the sense that you can set the policy
 to never allow pastes into certain domains.  This is done by altering
 the policy in /etc/qubes-rpc/policy/qubes. 
-\todo{Unfortunately, the default Terminal application is the GNOME
-Terminal (v3.22.2) which has already mapped Ctrl-Shift-v. Therefore,
-if you want to paste into a Terminal, you have to start at least a
-second application in the target VM. Before pasting, you have to
-switch to this second application, invoke the non-mapped Ctrl-Shift-v
-and then switch back to Terminal and paste with Ctrl-Shift-v. This a
-really silly usability bug. }
+%\todo{Unfortunately, the default Terminal application is the GNOME
+%Terminal (v3.22.2) which has already mapped Ctrl-Shift-v. Therefore,
+%if you want to paste into a Terminal, you have to start at least a
+%second application in the target VM. Before pasting, you have to
+%switch to this second application, invoke the non-mapped Ctrl-Shift-v
+%and then switch back to Terminal and paste with Ctrl-Shift-v. This a
+%really silly usability bug. }
 
 \subsubsection{Copying from and to dom0} 
 
@@ -530,25 +526,6 @@ focus on the remote managing functions, namely, Admin API and Core
 Stack. In addition, we will briefly mention the fully virtualized VMs,
 since they offer a partial solution to the recently discovered
 meltdown and spectre attacks.
-% As it is strictly mentioned on its official website's FAQ part, Qubes
-% is originally, regarding its security-obsessive nature, has not been a
-% multi-user system and it has no claim or pretention about supporting
-% multi-user environment, currently. Contrarily, since Qubes believes
-% that it is very difficult to ensure security in multi-user OS since
-% one controls dom0 has a control on the overall system too. While the
-% developers were creating the Qubes OS, they used to consider some ways
-% of creating unprivileged multi-user accounts in dom0 such that user
-% Alice didn't have access to user Bob's AppVMs. But they came up with
-% many threats as potential attack vectorsfrom such unprivileged user
-% account to system admin (root). Hence they decided not to implement
-% multi-user system.  Nevertheless, from Qubes 4 on, there are several
-% new management functionalities. They can be basically examined under
-% two main groups called Admin API and Core Stack.  %Note that, the next
-% two implemenatations of "Admin API" and "Core Stack" are innovations
-% peculiar to Qubes 4, hence the previous versions of Qubes did not have
-% those. To be more updated, we would rather focus on the latest version
-% i.e Qubes 4. Also we found those functionalities significant and
-% noteworthy.
 
 \subsection{Admin API} 
 
@@ -668,13 +645,13 @@ of using physical hardware token. It is similar to smart card
 implementation without having a phsical smart card.
 
 One very important assumption of U2F is that the browser verifies
-every request sent to the U2F token â€” in particular, that the web
+every request sent to the U2F token - in particular, that the web
 application sending an authentication request matches the application
 that would be authenticated by answering that request (in order to
 prevent, e.g., a phishing site from sending an authentication request
-for your bankâ€™s site). With the WebUSB feature in Chrome, however, a
+for your bank's site). With the WebUSB feature in Chrome, however, a
 malicious website can bypass this safeguard by connecting directly to
-the token instead of using the browserâ€™s U2F API.  The Qubes U2F
+the token instead of using the browser's U2F API.  The Qubes U2F
 Proxy also prevents this kind of attacks by implementing an additional
 verification layer. This verification layer allows you to enforce, for
 example, that the web browser in your \texttt{Facebook} qube can only
@@ -695,6 +672,8 @@ follows:
 --enable work qubes-u2f-proxy
 \end{verbatim}
 
+\section{Conclusion}
+A big downside of Qubes OS is that you can not test it properly in a virtual machine setup to try out if it is something for you.
 \nocite{*}
 
 
