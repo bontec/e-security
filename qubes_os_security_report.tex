@@ -32,7 +32,7 @@ Qubes OS is based on the assumption that it is impossible to create a
 bug-free desktop environment and one critical bug can ruin the
 security of your system and have malicious software taking control
 of your machine. Qubes OS plans to provide security by
-compartmentalisation of the various actions you perform on your
+compartmentalization of the various actions you perform on your
 computer into securely isolated compartments, called qubes.  This
 separation assures that when one qube gets compromised, the others
 remain unaffected, since they are isolated.  This technique is
@@ -64,19 +64,22 @@ shown in Figure~\ref{fig:qubesarch}.
 \end{figure}
 
 Not every application runs in its own qube for efficiency reasons. Instead
-each qube represents a security domain. In the default settings three
-qubes will be created: work, personal and untrusted. All these
+each qube represents a security domain. In the default settings four
+qubes will be created: work, personal, untrusted and vault. All these
 qubes/VMs are integrated in Qubes OS onto one common desktop
 environment. This integration is provided by Application Viewer, which
 makes it appear that all applications run on a native desktop. The
 security domain of an application is indicated with a colored frame.
-%In this report, we will
-% asses the Qubes operating system (OS) based on chapter 7 and 8 of
-% \cite{GollmannComputerSecurity}. As Qubes OS is linux based we expect
-% to have similarities with chapter 7 ``Unix Security'' of
-% \cite{GollmannComputerSecurity}.
-%\todo{check out https://www.qubes-os.org/doc/tools/ for experiments}
-%\todo{test qubes\_guid in dom0 terminal:  qubes\_guid} %-d domain_id [-c color] [-l label_index] [-i icon name, no suffix] [-v] [-q]}
+
+Qubes OS is considered is a security-focused and confidentiality-privileged OS. Some even consider it the best operating system when privacy and non-traceability is concerned. Edward Snowden himself is a self-declared user of Qubes OS as he tweeted on 13 December 2017. His tweets concerning Qubes OS can be found in Figure \ref{fig:tweets}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.45\textwidth]{tweet1.png}~
+  \includegraphics[width=0.45\textwidth]{tweet2.png}
+  \caption{Tweets from Edward Snowden related to Qubes OS}
+  \label{fig:tweets}
+\end{figure}
 
 In this report we will run some experiments. Even though, the developers discourage it, we choose to install Qubs OS in Oracle VM virtualBox since we did not have a spare pc to try it on. The latest version R4.0 can not even be installed in Oracle VM VirtualBox so we worked with Qubes-R3.2.1-x86\_64 to perform our experiments.
 
@@ -113,7 +116,7 @@ The command \texttt{qvm-ls} shows all the running VMs, for the default settings 
   \centering
   \includegraphics[width=0.45\textwidth]{qvm-ls1.png}~
   \includegraphics[width=0.45\textwidth]{qvm-ls2.png}
-  \caption{Qubes OS overview of running VMs\\}
+  \caption{Qubes OS overview of running VMs}
   \label{fig:qvm-ls}
 \end{figure}
 
@@ -142,7 +145,7 @@ graphics device as well as input devices like the keyboard and the
 mouse. It also manages the other VMs via the Qubes VM manager. Hence
 dom0 functions as the trusted computing base. If dom0 gets compromised
 the whole system is corrupted and there is no security left. The
-recomendations are that you never connect it to the network itself and
+recommendations are that you never connect it to the network itself and
 it is not used for web surfing or working with files.
 
 Since dom0 is the trusted computing base, all aspects of the Qubes
@@ -180,25 +183,25 @@ backend will reside in the backend domain. Typically this backend,
 that contains the core networking code, which includes network card
 drivers and various protocol stacks runs in the kernel. In Qubes OS,
 this backend will not be the dom0 domain, but a driver
-domain\footnote{A driver domain is an unpriviledged Xen domain that
+domain\footnote{A driver domain is an unprivileged Xen domain that
 handles one specific piece of hardware. The main idea is again that
 hardware drivers are failure-prone and it is good for safety to
 isolate them from the rest of the system.}, called the Network
 domain. The Intel VT-d technology is used to safely grant the
 unprivileged network domain access to the networking hardware by safe
 device assignment. Network protocols and routing might have
-exploitable bugs. By putting this functionality in an unprivileged
+exploitable bugs. By putting this functionality in an unprivilegedF
 domain, other domains will not be compromised even if the attack
 succeeds. All sensitive applications hosted in other domains should
 use network protocols that are protected by cryptography such as SSL,
 VPN or SSH.
 
-Routed networking is used as well as network address tranlation (NAT)
+Routed networking is used as well as network address translation (NAT)
 at each network hop to eliminate layer 2 attacks coming from a
 compromised VM. The default virtual network interface (vif) routing
 script is replaced with the custom \textbf{vif-route-qubes} script
 because the original one contained some deficiencies. When the
-Qubes-database is booted, it assignes the IP address of eth0 interface
+Qubes-database is booted, it assigns the IP address of eth0 interface
 in AppVM and two IP addresses to be used as nameservers. These last
 two are private addresses. Every time a network interface is
 initiated the \textbf{/usr/lib/qubes/qubes\_setup\_dnat\_to\_ns} script
@@ -295,7 +298,7 @@ your work email can not be influenced by malicious software appearing
 in the untrusted domain. These are the kind of setups that the Qubes
 OS developers envisioned when developing Qubes OS.
 
-AppVMs can be initialised with different system
+AppVMs can be initialized with different system
 distributions. This implies that the security model of the different 
 AppVMs depends on the chosen OS. As said before, all AppVMs
 based on the same system distribution will share the same read-only
@@ -366,7 +369,7 @@ dedicated AppVM.
 
 The objects of the access control are the resources, this includes
 files, directories, memory devices and I/O devices. These resources
-are organised in a three-structured system, like in unix systems since Qubes OS is Fedora based.
+are organised in a tree-structured system, like in unix systems since Qubes OS is Fedora based.
 These
 objects always exist in a specific domain and hence are accessible in
 that domain with the access structure that is defined in this VM. With
@@ -636,14 +639,14 @@ is jeopardized to be stolen. In addition, since the USB stack is also
 in the same monolithic OS, the system is vulnerable to possible
 attacks coming from BadUSB.
 
-In Qubes OS, on the other hand, as entire Qubes working scheme, the
-compartmentalisation principle is strictly implemented. That is to
+In Qubes OS, on the other hand, the
+compartmentalization principle is strictly implemented as it is done in the other components of the operating system. That is to
 say, the browsers and the USB stacks are strictly separated into
 different qubes in order to guarantee their isolation.  The Qubes U2F
 Proxy then allows the token connected to the USB stack in one qube to
 communicate with the browser in a separate qube if the access
-conditions are met. \textcolor{red}{Briefly, we assume neither the browser, nor the USB
-stack for each other and the entire units of the operating system.} Our
+conditions are met. Briefly, we assume neither the browser, nor the USB
+stack can trust each other and they are also considered untrusted by the other units of the operating system. Our
 proxy forwards only the data necessary to actually perform the
 authentication, leaving all unnecessary data out, so that it would not
 become a vector of attack.
@@ -691,7 +694,7 @@ follows:
 In general, we both like the setup of Qubes OS. We agree that if it is set up correctly and used well, it can provide some security that other operating systems will not offer. Even though, Qubes OS is created such that it integrates all virtual machines into one desktop environment to make the life of the user easier, we believe it is not such an easy operating system to use. Users have to be aware of the different features and why they are implemented like this. Therefore, we believe it is mostly created for users with technical knowledge, who really care a lot about their security. We would maybe recommend if one would be asking us specifically about a security-oriented operating system, however, we would not recommend it to less technical people because we believe it might get to complicated for them to use it properly.
 
 Acoording to us, a big downside of Qubes OS is that you can not test it properly in a virtual machine setup to try out if it is something for you. There is a version that installs to a USB drive, but that is also an earlier version so you can not try out the latest version. Another downside of Qubes OS is that its virtualised setup requires certain system requirements, mainly a lot of RAM is needed to run the operating system efficiently. There requirements are quite restrictive and require an investment of the user.
-The big advantages of Qubes OS is their compartmentalisation, which really provides some level of security as they claim. They do not claim to have an operating system without exploitable bugs, but with their chosen setup they really try to limit the possibilities for a breach. They try to achieve this by keeping the core of the system, the dom0 domain as small as possible and isolating the actions that a users performs as much as possible so that if a breach happens only a really small part of the system is affected. In addition, they created the system so that it integrates all functionalities in one desktop. In this way, it is still manageable for the user.
+The big advantages of Qubes OS is their compartmentalization, which really provides some level of security as they claim. They do not claim to have an operating system without exploitable bugs, but with their chosen setup they really try to limit the possibilities for a breach. They try to achieve this by keeping the core of the system, the dom0 domain as small as possible and isolating the actions that a users performs as much as possible so that if a breach happens only a really small part of the system is affected. In addition, they created the system so that it integrates all functionalities in one desktop. In this way, it is still manageable for the user.
 
 In our opinion, Qubes OS manages to do what it sets out to do. There have been bugs reported, like in every operating system. Even one that allowed that allowed hackers to own the host. However, the bug was fixed and extra security measures will be taken. When it comes to security there will never be a guarantee that the current system can not be broken, but Qubes OS seems to be maintained by some really competent developers who are in addition really open about their design positions and the reasoning behind there choices. Therefore, we believe it is a good choice if one is looking for a security-oriented operating system.
 \nocite{*}
