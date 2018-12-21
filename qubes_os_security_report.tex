@@ -78,6 +78,8 @@ security domain of an application is indicated with a colored frame.
 %\todo{check out https://www.qubes-os.org/doc/tools/ for experiments}
 %\todo{test qubes\_guid in dom0 terminal:  qubes\_guid} %-d domain_id [-c color] [-l label_index] [-i icon name, no suffix] [-v] [-q]}
 
+In this report we will run some experiments. Even though, the developers discourage it, we choose to install Qubs OS in Oracle VM virtualBox since we did not have a spare pc to try it on. The latest version R4.0 can not even be installed in Oracle VM VirtualBox so we worked with Qubes-R3.2.1-x86\_64 to perform our experiments.
+
 \section{Principals} 
 
 The principals are the active entities in a security policy, they are
@@ -105,9 +107,15 @@ qvm-ls
 For each of these AppVMs the user will be able to set properties like
 enabling or disabling the connection of the VM to the network, whether
 files can be copied into it. 
-%\todo{find the way to do this,
-%https://www.qubes-os.org/news/2017/10/03/core3/}
+The command \texttt{qvm-ls} shows all the running VMs, for the default settings it shows the list of VMs shown in Figure \ref{fig:qvm-ls}.
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.45\textwidth]{qvm-ls1.png}~
+  \includegraphics[width=0.45\textwidth]{qvm-ls2.png}
+  \caption{Qubes OS overview of running VMs\\}
+  \label{fig:qvm-ls}
+\end{figure}
 
 \subsection{The different domains}
 As said before, the whole system is build up from different
@@ -326,14 +334,6 @@ terminal. To see the activities of CPU we should apply the command of
 %  actions from terminal in the personal?}\todo{no groups?}
 
 \subsection{Login and passwords} 
-%\todo{TEST passwd in dom0 terminal to change password (look for
-%  password file, as in unix in /etc/passwd?) what does it mean to have
-%an empty string for the password in the password file, in unix this
-%means no password so free access,* for password means no login
-%possible as in unix? password file stores only hashes of
-%passwords?}\todo{probably no passwords in /etc/password but shadow
-%password file in /.secure/etc/passwd that can only be accessed by
-%root}
 
 In Qubes OS, login is basically done
 from the main domain called dom0.  Since the dom0 is more trusted than
@@ -341,20 +341,24 @@ the other domains it is authorized for login operations.  As a single
 user OS, Qubes OS recognizes and authenticates user via password on
 the dom0 terminal. A password has to be at least eight characters long, it should not contain the username and can not be a palindrome. Also it is checked against a dictionary of frequent used passwords to prevent users from using these. Changing password is also possible.  If you use
 the command of "passwd" command on dom0 terminal, you can easily
-change your password.  When changing the password as an experiment we found out it must be significantly different from the previous one, adding a character or removing a character is not enough, it is also not allowed to keep the previous one but if you fail to put in an acceptable password after three tries it goes back to the previous password. The password file can be found in %\texttt{\etc\passwd}. It does not hold the passwords, for security reasons they are stored in the shadow password file. The password file of our testmachine is shown in Figure \ref{passwdfile}. The permissions for the password file are \texttt{-rw-r--r--}, this file permissions are listed as in unix based systems since the base of Qubes OS is Fedora. Hence, the owner of the password file has read and write permissions and the group and other have only read permissions.
+change your password.  When changing the password as an experiment we found out it must be significantly different from the previous one, adding a character or removing a character is not enough, it is also not allowed to keep the previous one but if you fail to put in an acceptable password after three tries it goes back to the previous password. The password file can be found in \texttt{$\backslash$etc$\backslash$passwd}. 
+It does not hold the passwords, for security reasons they are stored in the shadow password file. The password file of our testmachine is shown in Figure \ref{fig:passwdfile}. The permissions for the password file are \texttt{-rw-r--r--}, this file permissions are listed as in unix based systems since the base of Qubes OS is Fedora. Hence, the owner of the password file has read and write permissions and the group and other have only read permissions.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1.0\textwidth]{passwdfile.png}
+  \caption{A screenshot of the Qubes password file}
+  \label{fig:passwdfile}
+\end{figure}
 
 \subsection{Shadow password files} 
 As it is stated in the Computer Security book of Gollmann
 \cite{GollmannComputerSecurity}, if you store your passwords in an
 explicit file, or in a VM in our Qubes OS case, it is possible for the
 hackers to obtain the passwords even if you hash them.  
-%(As we
-%know, from the most commonly used passwords, like 123456, cracking the
-%Hash codes is not an extremely rare issue for hackers even if you
-%choose a decent password.)  
 This danger might disable our gains from
 isolated environment. To prevent this we should implement shadow
-paging or in other words we should store this kind of data on shadowed file. The shadow password file can be found in %\texttt{\etc\shadow} and as it should, it is not accessible from a user log in. If we refer to the founder of Qubes OS, Joanna Rutkowska, she
+paging or in other words we should store this kind of data on shadowed file. The shadow password file can be found in \texttt{$\backslash$etc$\backslash$shadow} and as it should, it is not accessible from a user log in. If we refer to the founder of Qubes OS, Joanna Rutkowska, she
 recommends to use KeePassX for password storage and running it in a network-isolated
 dedicated AppVM.  
 
@@ -364,7 +368,7 @@ The objects of the access control are the resources, this includes
 files, directories, memory devices and I/O devices. These resources
 are organised in a three-structured system, like in unix systems since Qubes OS is Fedora based.
 These
-objects always exist in a specific domain and hence are accesible in
+objects always exist in a specific domain and hence are accessible in
 that domain with the access structure that is defined in this VM. With
 this we mean that the access control of these object will depend on
 the chosen operating system for this particular VM. 
@@ -409,21 +413,32 @@ these policy files is again the responsibility of the user. When the
 policy file does not exist upon a RPC request, the user is prompted to
 create one manually. If after the prompting, there is still no policy
 file in place then the action is denied. Hence, by default the action
-is denied unless the user explicitely allows this request by creating
+is denied unless the user explicitly allows this request by creating
 a line in the policy file. Next to this policy check,
 the actual RPC action should exist on the target VM, this means
 \texttt{/etc/qubes-rpc/RPCrequest} must exist containing the file name
 of the program that will be invoked upon this request or the
 program itself. When the program itself is placed here, it must have
-the execuatble permission set. %\todo{this is set as chmod -x in linux,
+the executable permission set. %\todo{this is set as chmod -x in linux,
  % so depending on os that the VM uses it internally uses these
  % security features.}
 
 As example we show the RPC policy for copying a file as it was created
-in dom0. The default RPC policy file is shown in Figure \ref{}. 
-%\todo{experiment create policy file for FileCopy as in
- % https://www.qubes-os.org/doc/rpc-policy/ and test whether it is true
- % that the first applicable rule grants or denies access.}
+in dom0. The default RPC policy file is shown in Figure \ref{fig:policy}. 
+So what we found by our experiments is that by default there is a file defining the policy and for the action Filecopy it contains the setting that by copying form any possible VM to another the user is asked for permission. This happens through a pop-up you can see in Figure \ref{fig:pop-up}. When we added a line to the policy file, more specifically we added \texttt{$work $untrusted deny}, this did not have any effect on the copying request. The pop-up request that allows the user to permit the action still appeared. So from our experiments we could not find out whether or not the first line satisfying the request would determine if the RPC request is allowed, for us this did not seem to be the case. This can, however, be due to the fact that we run Qubes OS in a virtual machine, which the developers do not recommend because it might not work properly.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.75\textwidth]{qubes-access-policy.png}
+  \caption{Qubes access policy}
+  \label{fig:policy}
+\end{figure}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.75\textwidth]{qubes-pop-up.png}
+  \caption{Qubes Filecopy request pop-up window}
+  \label{fig:pop-up}
+\end{figure}
 
 \subsection{Copy and paste between domains} 
 
@@ -489,7 +504,7 @@ have some flaws inside them. In order to detect this flaws and keep
 track of security breaches operating systems do logging a lot. The
 Qubes OS VM log files and the log files of the AppVMs can be found in
 the directory \texttt{/var/log/qubes}. The log file per VM are
-seperated in a file for graphical information, one for sound
+separated in a file for graphical information, one for sound
 information, one for inter VM communication and one for qubesdb
 information, the names of these log files are respectively
 \texttt{guid.<vmname>.log, pacat.<vmname>.log, qrexec.<vmname>.log}
@@ -500,27 +515,27 @@ and \texttt{qubesdb.<vmname>.log}.
 
 As mentioned before, Qubes OS is originally
 not designed as a multi-user system.  A multi-user system was
-considered but the developers found to many potential attack vecctors,
-they believe the building bloks of their system are not fit to ensure
-security in a multi-user environment, so it can not be implemmented
+considered but the developers found to many potential attack vectors,
+they believe the building blocks of their system are not fit to ensure
+security in a multi-user environment, so it can not be implemented
 securely at the moment. Important to mention is that in any case, the
 user who controls dom0 always controls the whole system. The main
 focus of Qubes OS is protecting the user from various treats, rather
-than proctecting the system from the user.
+than protecting the system from the user.
 
 However, in order to become an operating system that can be used in
-corperate environments or large organisations, there must be a
+corporate environments or large organisations, there must be a
 mechanism in Qubes OS to make it remotely manageable by entities such
 as IT departments.  Therefore, the developers created several new
 management functionalities in Qubes OS R4.0. They can be basically
-examined under two main groups called Admin API and Core Stackv3. Next
-to these management functionalities there are several other
-improvments like fully virtualized VMs, multiple and more flexible
+examined under two main groups called Admin API and Core Stack version 3. Next
+to these management functionalities, there are several other
+improvements like fully virtualized VMs, multiple and more flexible
 disposable VM templates, a more expressive and user-friendly Qubes RPC
 policy system, a more powerful VM volume manager that enables us to
 keep VMs on external drives easier, enhanced template VM security via
 splitted packages and network interface, more secure backups with
-scrypt for stronger key derivation and enforced encryption and
+script for stronger key derivation and enforced encryption and
 command-line tools with new options. In our report, we will mainly
 focus on the remote managing functions, namely, Admin API and Core
 Stack. In addition, we will briefly mention the fully virtualized VMs,
@@ -532,7 +547,7 @@ meltdown and spectre attacks.
 Admin API aims to enable users to manage the
 domains without direct access to dom0. Briefly, it allows the users to
 remotely manage multiple Qubes machines.  The biggest motivation to
-implement this functionality was targetting the enterprise customers
+implement this functionality was targeting the enterprise customers
 and corporations. The developers believe that enabling IT
 administrators to remotely manage multiple Qubes machines would be
 very useful.  The Admin API would also allow the creation of a
@@ -583,9 +598,9 @@ backdoor in the system through either Meltdown or Spectre.
 \section{U2F} 
 
 U2F is a well-known, widespread second level
-authentication protocol stands for Universal Second Factor. It has
+authentication protocol and stands for Universal Second Factor. It has
 been successfully adopted by large scale corporations and even
-govenrment organizations including Facebook, Gmail, Dropbox, GitHub,
+government organizations including Facebook, Gmail, Dropbox, GitHub,
 the UK government and so on. It basically depends on what you have or
 you are given for a temporary and preferably short time period rather
 than what you know since the latter one can be acquired by malicious
@@ -596,15 +611,15 @@ such that to satisfy the U2F standards imposed by FIDO Alliance.
 U2F, primarily uses the hardware devices called as tokens as second
 factors. It is a developed version of two-step authentication in which
 the user basically receives the second level authentication code via
-an Application exists in the user's smartphone or SMS. However this
-classical two-step authentications is vulnerable to phishing and the
-man-in-the-middle attacks because application requesting the two-step
-authentication code is typically not itself authenticated by the
-user. In other words, users can accidentally give their codes to
+an application existing in the user's smartphone or SMS. However, this
+classical two-step authentications is vulnerable to phishing and
+man-in-the-middle attacks because applications requesting the two-step
+authentication code are typically not authenticated by the
+user themselves. In other words, users can accidentally give their codes to
 hackers since they can not always be sure who is really asking for the
 code. In the U2F model, on the other hand, ensuring the reliability of
-the requesting authentication is browser's responsibility hence the
-when the application has been received our tokens knows the request is
+the requesting authentication is browser's responsibility. Hence
+when the application has received our tokens, he knows the request is
 coming from a trustworthy web application.
 
 \subsection{Qubes U2F} 
@@ -612,11 +627,11 @@ coming from a trustworthy web application.
 In a conventional U2F, both web browsers and
 USB stacks and thus U2F tokens are all running in the same monolithic
 OS due to the nature of the classical, non-isolated, operating
-systems. In this case we presume that the browser is reliable and
+systems. In this case, we presume that the browser is reliable and
 hence we enable all kind of browsers to access all of the keys stored
-on the U2F token. By this way, the user has no true control over which
-browser can access to which keys and for which service or
-purpose. Therefore, in case a browser is compromised every single key
+on the U2F token. Like this, the user has no true control over which
+browser can access which keys and for which service or
+purpose. Therefore, in case a browser is compromised, every single key
 is jeopardized to be stolen. In addition, since the USB stack is also
 in the same monolithic OS, the system is vulnerable to possible
 attacks coming from BadUSB.
@@ -627,8 +642,8 @@ say, the browsers and the USB stacks are strictly separated into
 different qubes in order to guarantee their isolation.  The Qubes U2F
 Proxy then allows the token connected to the USB stack in one qube to
 communicate with the browser in a separate qube if the access
-conditions are met. Briefly, we assume neither the browser nor the USB
-stack for each other and the entire units of the operating system. Our
+conditions are met. \textcolor{red}{Briefly, we assume neither the browser, nor the USB
+stack for each other and the entire units of the operating system.} Our
 proxy forwards only the data necessary to actually perform the
 authentication, leaving all unnecessary data out, so that it would not
 become a vector of attack.
@@ -642,7 +657,7 @@ as a fake USB-like HID device using \texttt{uhid}. The backend runs in
 \texttt{u2flib\_host} reference library. Prospectively, Qubes plans to
 set up Qubes U2F Proxy with a software token in a special qube instead
 of using physical hardware token. It is similar to smart card
-implementation without having a phsical smart card.
+implementation without having a physical smart card.
 
 One very important assumption of U2F is that the browser verifies
 every request sent to the U2F token - in particular, that the web
@@ -673,7 +688,12 @@ follows:
 \end{verbatim}
 
 \section{Conclusion}
-A big downside of Qubes OS is that you can not test it properly in a virtual machine setup to try out if it is something for you.
+In general, we both like the setup of Qubes OS. We agree that if it is set up correctly and used well, it can provide some security that other operating systems will not offer. Even though, Qubes OS is created such that it integrates all virtual machines into one desktop environment to make the life of the user easier, we believe it is not such an easy operating system to use. Users have to be aware of the different features and why they are implemented like this. Therefore, we believe it is mostly created for users with technical knowledge, who really care a lot about their security. We would maybe recommend if one would be asking us specifically about a security-oriented operating system, however, we would not recommend it to less technical people because we believe it might get to complicated for them to use it properly.
+
+Acoording to us, a big downside of Qubes OS is that you can not test it properly in a virtual machine setup to try out if it is something for you. There is a version that installs to a USB drive, but that is also an earlier version so you can not try out the latest version. Another downside of Qubes OS is that its virtualised setup requires certain system requirements, mainly a lot of RAM is needed to run the operating system efficiently. There requirements are quite restrictive and require an investment of the user.
+The big advantages of Qubes OS is their compartmentalisation, which really provides some level of security as they claim. They do not claim to have an operating system without exploitable bugs, but with their chosen setup they really try to limit the possibilities for a breach. They try to achieve this by keeping the core of the system, the dom0 domain as small as possible and isolating the actions that a users performs as much as possible so that if a breach happens only a really small part of the system is affected. In addition, they created the system so that it integrates all functionalities in one desktop. In this way, it is still manageable for the user.
+
+In our opinion, Qubes OS manages to do what it sets out to do. There have been bugs reported, like in every operating system. Even one that allowed that allowed hackers to own the host. However, the bug was fixed and extra security measures will be taken. When it comes to security there will never be a guarantee that the current system can not be broken, but Qubes OS seems to be maintained by some really competent developers who are in addition really open about their design positions and the reasoning behind there choices. Therefore, we believe it is a good choice if one is looking for a security-oriented operating system.
 \nocite{*}
 
 
